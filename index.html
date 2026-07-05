@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端工程師作品集 | 網頁樣板客製化服務</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 font-sans antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+
+    <!-- Header 導覽列 -->
+    <header class="sticky top-0 z-40 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 select-none">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400 bg-clip-text text-transparent">Dev.Portfolio</a>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                <a href="#templates" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">網頁樣板</a>
+                <a href="#faq" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">常見問題</a>
+                <a href="javascript:void(0)" onclick="openInquiryModal('general')" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">聯絡諮詢</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <!-- 深淺主題切換按鈕 -->
+                <button id="theme-toggle" class="p-2 text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 rounded-lg transition" title="切換主題">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+                <a href="#templates" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg font-medium transition duration-200">
+                    挑選樣板
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero 視覺區 -->
+    <section class="max-w-4xl mx-auto px-6 py-20 text-center select-none">
+        <span class="text-xs font-semibold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800/50 px-3 py-1 rounded-full">Frontend Developer</span>
+        <h1 class="mt-6 text-4xl md:text-6xl font-black tracking-tight leading-none text-zinc-900 dark:text-white">
+            打造兼具美感與<br class="hidden md:block">
+            <span class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">高效能</span>的專屬網站
+        </h1>
+        <p class="mt-6 text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto !select-text">
+            專為個人品牌、電商與教育機構設計。選擇您喜愛的樣板，由我為您快速客製化上線。
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#templates" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-lg font-medium transition">瀏覽所有樣板</a>
+            <!-- 修改點：點選「聯絡我」改為彈出 Popup -->
+            <button onclick="openInquiryModal('general')" class="border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 px-8 py-3.5 rounded-lg font-medium transition">聯絡我</button>
+        </div>
+    </section>
+
+    <!-- 無縫跑馬燈區 (強化在淺色模式下的軌道背景與陰影界線) -->
+    <section class="overflow-hidden py-10 bg-zinc-100 dark:bg-zinc-900/30 border-y border-zinc-200 dark:border-zinc-900 shadow-inner select-none">
+        <div class="marquee-container flex gap-6 w-max">
+            <div id="marquee-track" class="flex gap-6 animate-marquee"></div>
+        </div>
+    </section>
+
+    <!-- 樣板目錄區 -->
+    <section id="templates" class="max-w-6xl mx-auto px-6 py-20 scroll-mt-10">
+        <div class="text-center max-w-xl mx-auto select-none">
+            <h2 class="text-3xl font-bold">精選網頁樣板庫</h2>
+            <p class="mt-3 text-zinc-600 dark:text-zinc-400">點擊「即時預覽」可自由切換手機或電腦尺寸觀看實際網頁效果。</p>
+        </div>
+
+        <!-- 分類篩選器 -->
+        <div class="mt-10 flex flex-wrap justify-center gap-2 select-none" id="filter-buttons">
+            <button data-filter="all" class="filter-btn active px-4 py-2 rounded-full text-sm font-medium transition">全部</button>
+            <button data-filter="shop" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition">電商與商務</button>
+            <button data-filter="portfolio" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition">個人品牌</button>
+            <button data-filter="landing" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition">一頁式推廣</button>
+            <button data-filter="edu" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition">教育與培訓</button>
+        </div>
+
+        <!-- 樣板卡片網格 -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="template-grid">
+            <!-- 由 script.js 動態渲染 -->
+        </div>
+    </section>
+
+    <!-- 常見問題 (FAQ) -->
+    <section id="faq" class="max-w-3xl mx-auto px-6 py-20 border-t border-zinc-200 dark:border-zinc-900 scroll-mt-10">
+        <h2 class="text-3xl font-bold text-center mb-10 select-none">常見問題</h2>
+        <div class="space-y-4" id="faq-container">
+            <!-- 由 script.js 動態渲染 -->
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-900 py-16 text-center select-none">
+        <div class="max-w-4xl mx-auto px-6">
+            <h3 class="text-2xl font-bold text-zinc-900 dark:text-white">立即開啟您的網頁專案</h3>
+            <p class="mt-2 text-zinc-600 dark:text-zinc-400 !select-text">挑選好喜歡的樣式了嗎？歡迎隨時與我聯絡，討論您的客製化需求。</p>
+            
+            <div class="mt-8 flex flex-wrap justify-center gap-6">
+                <a href="https://line.me/R/ti/p/@您的官方帳號ID" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-lg font-medium transition">
+                    <i data-lucide="message-square"></i> LINE 官方帳號
+                </a>
+                <a href="https://t.me/您的TG帳號" target="_blank" class="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 text-white px-5 py-3 rounded-lg font-medium transition">
+                    <i data-lucide="send"></i> Telegram 諮詢
+                </a>
+                <a href="mailto:your_email@example.com" class="flex items-center gap-2 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 px-5 py-3 rounded-lg font-medium transition">
+                    <i data-lucide="mail"></i> Email 聯絡
+                </a>
+            </div>
+            <p class="mt-12 text-xs text-zinc-400 dark:text-zinc-600">&copy; 2026 Dev.Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================== 【彈出式視窗：多系列樣板 Lightbox】 ================== -->
+    <div id="series-modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-sm hidden select-none">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl transition-transform duration-300 scale-95 opacity-0" id="series-modal-content">
+            <div class="p-6 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50 dark:bg-zinc-900/50">
+                <div>
+                    <h3 id="series-modal-title" class="text-xl font-bold text-zinc-900 dark:text-white">載入中...</h3>
+                    <p id="series-modal-desc" class="text-sm text-zinc-500 mt-1">請挑選您想觀看的網頁樣板：</p>
+                </div>
+                <button id="close-series-modal" class="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:white rounded-lg transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[60vh] grid grid-cols-1 md:grid-cols-2 gap-6" id="series-sub-grid">
+                <!-- 由 script.js 動態渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== 【主頁通用：雙軌聯絡/諮詢 Popup】 ================== -->
+    <div id="inquiry-modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-sm hidden select-none">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transition-transform duration-300 scale-95 opacity-0" id="inquiry-modal-content">
+            
+            <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50 dark:bg-zinc-900/50">
+                <h3 class="font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="help-circle" class="text-indigo-500"></i> 請選擇諮詢方式
+                </h3>
+                <button id="close-inquiry-modal" class="p-1 text-zinc-400 hover:text-zinc-600 dark:hover:white rounded-lg transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- 分頁選單 -->
+            <div class="flex border-b border-zinc-200 dark:border-zinc-800">
+                <button id="tab-line" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400 transition">
+                    LINE 快速諮詢
+                </button>
+                <button id="tab-form" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition">
+                    留資料聯絡我
+                </button>
+            </div>
+
+            <!-- LINE -->
+            <div id="panel-line" class="p-6 text-center block">
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+                    點擊下方按鈕將開啟 LINE 官方帳號，並在對話中為您帶入對應的詢問資訊。
+                </p>
+                <a id="line-direct-link" href="#" target="_blank" class="w-full justify-center inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-5 rounded-xl transition">
+                    <i data-lucide="message-square"></i> 開啟 LINE 進行諮詢
+                </a>
+            </div>
+
+            <!-- 表單 (Web3Forms) -->
+            <div id="panel-form" class="p-6 hidden">
+                <form id="contact-form" class="space-y-4">
+                    <!-- 註冊後請換成您的 Access Key -->
+                    <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                    <input type="hidden" name="subject" id="form-email-subject" value="新諮詢信件">
+                    <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">您的稱呼</label>
+                        <input type="text" name="name" required placeholder="例如：林先生 / Alice" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">聯絡方式 (LINE ID / Email)</label>
+                        <input type="text" name="contact_info" required placeholder="例如：Line ID: abc12345" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">需求簡述 (選填)</label>
+                        <textarea name="message" rows="3" placeholder="例如：我想評估開發個人才藝網站..." class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" id="form-submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition flex justify-center items-center gap-2">
+                        送出聯絡資訊
+                    </button>
+                </form>
+
+                <div id="form-success-state" class="hidden text-center py-6">
+                    <div class="mx-auto w-12 h-12 bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-500 text-emerald-500 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="check" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-lg text-zinc-900 dark:text-white">資料提交成功！</h4>
+                    <p class="text-sm text-zinc-500 mt-2">諮詢訊息已成功寄送，我將儘快加您的 LINE 與您聯繫！</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
