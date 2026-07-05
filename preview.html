@@ -18,7 +18,7 @@
     <!-- 頂部控制列 -->
     <header class="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between px-6 shrink-0 z-10 select-none">
         <div class="flex items-center gap-4">
-            <a href="index.html#templates" class="text-zinc-500 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 text-sm font-medium transition">
+            <a href="index.html#templates" class="text-zinc-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-white flex items-center gap-1 text-sm font-medium transition">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回列表
             </a>
             <div class="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700"></div>
@@ -30,10 +30,10 @@
             <button id="btn-desktop" class="p-2 rounded-md hover:text-indigo-600 dark:hover:text-white text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-900 shadow-sm transition" title="電腦版 (100%)">
                 <i data-lucide="monitor" class="w-5 h-5"></i>
             </button>
-            <button id="btn-tablet" class="p-2 rounded-md text-zinc-500 hover:text-indigo-600 dark:hover:text-white transition" title="平板版 (768px)">
+            <button id="btn-tablet" class="p-2 rounded-md text-slate-500 hover:text-indigo-600 dark:hover:text-white transition" title="平板版 (768px)">
                 <i data-lucide="tablet" class="w-5 h-5"></i>
             </button>
-            <button id="btn-mobile" class="p-2 rounded-md text-zinc-500 hover:text-indigo-600 dark:hover:text-white transition" title="手機版 (375px)">
+            <button id="btn-mobile" class="p-2 rounded-md text-slate-500 hover:text-indigo-600 dark:hover:text-white transition" title="手機版 (375px)">
                 <i data-lucide="smartphone" class="w-5 h-5"></i>
             </button>
         </div>
@@ -132,7 +132,30 @@
             document.documentElement.classList.remove('dark');
         }
 
-        // ================== 【預覽頁裝置尺寸切換邏輯】 ==================
+        // ================== 【1. 智慧讀取網址參數，載入樣板並設定 iframe（已補回！）】 ==================
+        const params = new URLSearchParams(window.location.search);
+        const templateId = params.get('id');
+        
+        // 使用跨層級搜尋函式
+        const template = findTemplateById(templateId);
+
+        if (template) {
+            document.title = `${template.title} | 樣板即時預覽`;
+            document.getElementById('template-title').innerText = template.title;
+            document.getElementById('preview-iframe').src = template.demoUrl;
+            
+            // 動態產生 LINE 快速諮詢連結 (請將 @您的官方帳號ID 替換掉)
+            const lineBase = "https://line.me/R/ti/p/@您的官方帳號ID"; 
+            const messageText = `您好，我瀏覽了您的作品集網站，對您的「${template.title}」網頁樣板很感興趣，想要進一步諮詢。`;
+            document.getElementById('line-direct-link').href = `${lineBase}?text=${encodeURIComponent(messageText)}`;
+            
+            // 設定 Web3Forms 電子郵件主旨
+            document.getElementById('form-email-subject').value = `樣板諮詢：${template.title}`;
+        } else {
+            document.getElementById('template-title').innerText = "未找到對應樣板";
+        }
+
+        // ================== 【2. 預覽頁裝置尺寸切換邏輯】 ==================
         const wrapper = document.getElementById('preview-wrapper');
         const btnDesktop = document.getElementById('btn-desktop');
         const btnTablet = document.getElementById('btn-tablet');
@@ -169,7 +192,7 @@
             wrapper.className = "max-w-full h-full transition-all duration-300 ease-out border-x-[12px] border-zinc-200 dark:border-zinc-800 shadow-2xl flex justify-center items-center";
         });
 
-        // ================== 【雙軌諮詢 Popup】 ==================
+        // ================== 【3. 雙軌諮詢 Popup】 ==================
         const inquiryModal = document.getElementById('inquiry-modal');
         const inquiryContent = document.getElementById('inquiry-modal-content');
         const openInquiryBtn = document.getElementById('open-inquiry-modal');
@@ -209,7 +232,7 @@
             panelLine.classList.add('hidden');
         });
 
-        // ================== 【AJAX 發送郵件邏輯 (Web3Forms)】 ==================
+        // ================== 【4. AJAX 發送郵件邏輯 (Web3Forms)】 ==================
         const contactForm = document.getElementById('contact-form');
         const successState = document.getElementById('form-success-state');
         const submitBtn = document.getElementById('form-submit-btn');
